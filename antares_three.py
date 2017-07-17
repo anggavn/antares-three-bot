@@ -44,19 +44,26 @@ async def on_ready():
 	
 	await client.change_presence(game = discord.Game(name = playing_text, type = playing_type))
 
-#relay to console
+#relay to console for commands
 @client.event
 async def on_message(message):
 	await client.wait_until_ready()
 
 	message_content = message.content.strip()
-	if message_content.startswith(bot_prefix):
-		print('[Command] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
+	if not message_content.startswith(bot_prefix):
+		return
+	if message.author == client.user:
+		print('[ Error ] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
+		space_len = len('[Command] {0.id}[{0.name}]:'.format(message.author))
+		for _ in range(space_len):
+			print(' ', end='')
+		print('  ^ AnTaRes_three was forced to command himself.')
+		return
 
+	print('[Command] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
 	await client.process_commands(message)
 		
-#here we go
-	
+##here we go
 #iff function
 @client.group(pass_context = True)
 async def iff(ctx):
@@ -83,9 +90,15 @@ async def help():
 async def add(one:int, two:int):
 	await client.say('{0} + {1} = {2}'.format(one, two, one + two))
 
+#echo function
+@client.command()
+async def echo(*, text:str):
+	await client.say(text)
+
 #shutdown function
 @client.command()
 async def dismiss():
+	await client.say('Antares Three, Out!')
 	await client.close()
 	print('{} has been terminated.'.format(client.user.name))
 
