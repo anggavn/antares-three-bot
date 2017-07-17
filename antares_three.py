@@ -3,6 +3,9 @@ from discord.ext import commands
 #from discord.ext.commands import Bot
 
 import asyncio
+import os
+import sys
+import time
 
 #settings
 bot_prefix = 'a3.'
@@ -13,7 +16,6 @@ playing_type = 1
 flightplan_id = '335918281615736834'
 afterhours_id = '335918709476687875'
 
-#fff
 bot_description = '''antares three developing phase'''
 
 #init
@@ -21,15 +23,28 @@ bot_description = '''antares three developing phase'''
 client = commands.Bot(command_prefix = bot_prefix, description = bot_description)
 
 #startup
+os.system('cls' if os.name == 'nt' else 'clear')
+#while not client.is_logged_in:
+#	print('Connecting to discord', end='')
+#	count = 1
+#	count_max = 3
+#	while not client.is_logged_in and count<=count_max:
+#		print('.', end=' ', flush=True)
+#		time.sleep(0.5)
+#		count += 1
+#	sys.stdout.write('\r\x1b[K')
+#	sys.stdout.flush()
 
+print('Starting bot')
 @client.event
 async def on_ready():
+	os.system('cls' if os.name == 'nt' else 'clear')
 	print('{} Online'.format(client.user.name))
 	print('ID  : {}\n'.format(client.user.id))
 	
 	await client.change_presence(game = discord.Game(name = playing_text, type = playing_type))
 
-
+#relay to console
 @client.event
 async def on_message(message):
 	await client.wait_until_ready()
@@ -42,7 +57,7 @@ async def on_message(message):
 		
 #here we go
 	
-#iff functions
+#iff function
 @client.group(pass_context = True)
 async def iff(ctx):
 	if ctx.invoked_subcommand is None:
@@ -63,16 +78,15 @@ async def on(*, text:str):
 async def help():
 	await client.say('To perform an IFF (**I**dentify: **F**riend or **F**oe), enter:\n```{}iff on @[username]```'.format(bot_prefix))
 
+#adding function
 @client.command()
 async def add(one:int, two:int):
 	await client.say('{0} + {1} = {2}'.format(one, two, one + two))
-	
-@client.group(pass_context = True)
-async def isempty(ctx):
-	await client.say('yes?')
-	
+
+#shutdown function
 @client.command()
-async def echo(*, message:str):
-	await client.say(message)
-	
+async def dismiss():
+	await client.close()
+	print('{} has been terminated.'.format(client.user.name))
+
 client.run(bot_token)

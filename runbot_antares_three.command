@@ -5,4 +5,5 @@ cd "$(dirname "$BASH_SOURCE")" || {
 exit 1
 }
 
+#alwasys run with python3.5 bcs python3.6 fucks discord.py
 python3.5 antares_three.py
