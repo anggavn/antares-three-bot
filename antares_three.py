@@ -1,12 +1,20 @@
+#!/usr/bin/env python3.5
+
 import asyncio
 import os
 import sys
 import time
+from urllib.request import urlopen
 
-from getch import pause
+from bs4 import BeautifulSoup
 
 import discord
 from discord.ext import commands
+
+from getch import pause
+
+import requests
+
 #from discord.ext.commands import Bot
 
 #settings
@@ -15,6 +23,7 @@ bot_token = 'MzM1OTY2MzcxMjQwNDc2Njgz.DExcmw.GTIEPHAexF_7Iq0-OfeeoBkeR9s'
 playing_text = 'with Python3.5'
 playing_type = 1
 
+#chatroom
 flightplan_id = '335918281615736834'
 afterhours_id = '335918709476687875'
 
@@ -23,6 +32,20 @@ bot_description = '''antares three developing phase'''
 #init
 #Client = discord.Client()
 client = commands.Bot(command_prefix = bot_prefix, description = bot_description)
+
+def wowfreaks_is_on():
+    wf_page = requests.get('https://www.wow-freakz.com/index.php')
+    wf_parsed = BeautifulSoup(wf_page.text, 'html.parser')
+    wf_uptime = wf_parsed.find_all(id='uptime_5')
+    wf_uptime_text = wf_uptime[0].get_text()
+    return wf_uptime_text
+
+def discord_is_on():
+    try:
+        urlopen('http://216.58.192.142', timeout=1)
+        return True
+    except urllib2.URLError as err: 
+        return False
 
 #startup
 os.system('cls' if os.name == 'nt' else 'clear')
@@ -37,7 +60,9 @@ os.system('cls' if os.name == 'nt' else 'clear')
 #   sys.stdout.write('\r\x1b[K')
 #   sys.stdout.flush()
 
-print('Starting bot')
+# print('// Starting bot. Please wait. . .')
+# print('// Checking network connection. . .', end='')
+
 @client.event
 async def on_ready():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -89,15 +114,23 @@ async def on(*, text:str):
 async def help():
     await client.say('To perform an IFF (**I**dentify: **F**riend or **F**oe), enter:\n```{}iff on @[username]```'.format(bot_prefix))
 
-#adding functßion
+#adding function
 @client.command()
 async def add(one:int, two:int):
     await client.say('{0} + {1} = {2}'.format(one, two, one + two))
 
 #echo function
-@client.command()
+@client.command(aliases='say')
 async def echo(*, text:str):
     await client.say(text)
+
+#wow function
+@client.command()
+async def wow():
+    uptime = wowfreaks_is_on()
+    msg = ('WOW Freakz Felsong (Legion) server status:\n'\
+        +'```Server {}```'.format(uptime))
+    await client.say(msg)
 
 #shutdown function
 @client.command()
