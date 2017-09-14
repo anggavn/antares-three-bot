@@ -1,0 +1,27 @@
+# settings!
+
+# put your credentials here. token prefered, but if
+# not, email and password are okay
+[credentials]
+bot_token = '[insert token here]'
+#bot_email = ''
+#bot_password = ''
+
+# put the id of the owner of the bot here
+[owner]
+owner_id = '[insert owner id number here]'
+
+[settings]
+command_prefix = 'a3.'  #prefix before commands
+playing_text = 'with Python3.5' #text displayed in the 'playing' field
+playing_type = '1'
+
+# list of channel ids the bot is allowed to post in
+channel_id_bind = [
+    '[insert channel id here]',
+    ]
+
+# list of server ids the bot is allowed to post in
+server_id_bind = [
+    '[insert server id here]',
+    ]

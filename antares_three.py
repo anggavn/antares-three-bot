@@ -40,12 +40,11 @@ class Config(object):
 
 def wowfreakz_status():
     try:
-        urlopen('https://www.wow-freakz.com/index.php')
-    except: 
-        return False
-    else:
         wf_page = requests.get('https://www.wow-freakz.com/index.php')
         wf_parsed = BeautifulSoup(wf_page.text, 'html.parser')
+    except: 
+        return False
+        
     # per server
     # in div 5 (legion)
     wf_5 = wf_parsed.find('div', class_="realm_div_5")
@@ -76,6 +75,7 @@ def wowfreakz_status():
 config = Config('config.toml')
 client = commands.Bot(command_prefix = config.command_prefix, description = bot_description)
 
+
 #when bot is ready
 @client.event
 async def on_ready():
@@ -87,10 +87,12 @@ async def on_ready():
 #relay to console for commands
 @client.event
 async def on_message(message):
+    last_message = message
+    cmd_err = False
     await client.wait_until_ready()
     message_content = message.content.strip()
 
-    if not message_content.startswith(config.command_prefix):
+    if not message_content.startswith(config.command_prefix.lower()):
         return
     if message.author == client.user:
         print('[Warning] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
@@ -102,21 +104,41 @@ async def on_message(message):
         print('[   ~   ] {} was forced to command himself'.format(client.user.name))
         return
 
-    try:
-        await client.send_typing(message.channel)
-        await client.process_commands(message)
-        print('[Command] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
-    except commands.errors.CommandNotFound as err:
-        print('[ Error ] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
-        print('[   ~   ] {}'.format(err))
-    except commands.errors.CommandError as err:
-        print('[ Error ] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
-        print('[   ~   ] Error Occured. {}'.format(err))
-    except:
-        print('[ Error ] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
-        print('[   ~   ] Error Occured.')
+    # command, *args = message_content.split()
+    # command = command[len(config.command_prefix):].lower().strip()
+    # if not bot_command:
+    #     print('[Warning] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
+    #     print('[   ~   ] Invalid command attempt')
+    #     return
 
-##here we go
+    # try:
+    #     await client.process_commands(message)
+    # except commands.errors.CommandNotFound as err:
+    #     print('[ Error ] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
+    #     print('[   ~   ] {}'.format(err))
+    # except commands.errors.CommandError as err:
+    #     print('[ Error ] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
+    #     print('[   ~   ] Error Occured. {}'.format(err))
+    # except:
+    #     print('[ Error ] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
+    #     print('[   ~   ] Error Occured.')
+    # else:
+    #     await client.send_typing(message.channel)
+    #     print('[Command] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
+    print('[Command] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
+    await client.send_typing(message.channel)
+    await client.process_commands(message)
+
+
+
+# @client.event
+# async def on_command(command, ctx):
+#     print('[Command] {0.id}[{0.name}]: \"{1}\"'.format(message.author, message_content))
+#     return
+
+
+###################################here we go
+
 #iff function
 @client.group(pass_context = True)
 async def iff(ctx):
@@ -186,7 +208,7 @@ os.system('cls' if os.name == 'nt' else 'clear')
 #   sys.stdout.write('\r\x1b[K')
 #   sys.stdout.flush()
 
-# print('// Starting bot. Please wait. . .')
+print('// Starting bot. Please wait. . .')
 # print('// Checking network connection. . .', end='')
 client.run(config.bot_token)
 
